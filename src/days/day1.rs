@@ -1,6 +1,6 @@
 use crate::days::aoc::Solution;
 
-use super::aoc::Answer;
+use super::aoc::{get_path, read_file_i32, Answer, Files};
 
 pub struct Day1 {}
 
@@ -13,7 +13,11 @@ impl Day1 {
 impl Solution for Day1 {
     fn solve_example1(&self) -> Answer {
         let instant = self.timer_start();
-        return Answer::new("answer example1", instant.elapsed());
+        let data = read_file_i32(&get_path(Files::Example1, self.get_day()));
+
+        let result = &data.into_iter().reduce(|a, b| a + b).unwrap();
+
+        return Answer::new(&result.to_string(), instant.elapsed());
     }
 
     fn solve_part1(&self) -> Answer {

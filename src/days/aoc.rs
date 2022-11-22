@@ -90,7 +90,7 @@ pub fn pretty_print_day(day: i32, part: i32) {
 pub fn pretty_print_linebreak() {
     christmas_print("\n=====================================\n");
 }
-pub fn get_file(path: &str) -> File {
+pub fn open_file(path: &str) -> File {
     let file = File::open(path);
     let file = match file {
         Ok(file) => file,
@@ -101,8 +101,26 @@ pub fn get_file(path: &str) -> File {
 }
 
 #[allow(dead_code)]
+pub enum Files {
+    Example1,
+    Example2,
+    Part2,
+    Part1,
+}
+
+pub fn get_path(file: Files, day: i32) -> String {
+    let path = match file {
+        Files::Example1 => format!("day_{}_example1", day),
+        Files::Example2 => format!("day_{}_example2", day),
+        Files::Part1 => format!("day_{}_part1", day),
+        Files::Part2 => format!("day_{}_part2", day),
+    };
+    return path;
+}
+
+#[allow(dead_code)]
 pub fn read_file_i32(path: &str) -> Vec<i32> {
-    let file = get_file(path);
+    let file = open_file(path);
     let bf = BufReader::new(file);
 
     let result = bf
@@ -114,7 +132,7 @@ pub fn read_file_i32(path: &str) -> Vec<i32> {
 
 #[allow(dead_code)]
 pub fn read_file_str(path: &str) -> Vec<String> {
-    let file = get_file(path);
+    let file = open_file(path);
 
     let bf = BufReader::new(file);
 
