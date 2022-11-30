@@ -110,10 +110,10 @@ pub enum Files {
 
 pub fn get_path(file: Files, day: i32) -> String {
     let path = match file {
-        Files::Example1 => format!("day_{}_example1", day),
-        Files::Example2 => format!("day_{}_example2", day),
-        Files::Part1 => format!("day_{}_part1", day),
-        Files::Part2 => format!("day_{}_part2", day),
+        Files::Example1 => format!("days/day_{}_example1", day),
+        Files::Example2 => format!("days/day_{}_example2", day),
+        Files::Part1 => format!("days/day_{}_part1", day),
+        Files::Part2 => format!("days/day_{}_part2", day),
     };
     return path;
 }

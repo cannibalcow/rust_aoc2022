@@ -35,8 +35,3 @@ impl Solution for Day2 {
         return 2;
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-}

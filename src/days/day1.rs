@@ -40,7 +40,3 @@ impl Solution for Day1 {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-}

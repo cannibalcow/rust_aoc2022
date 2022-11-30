@@ -10,8 +10,11 @@ Input files should be placed in root of the project with the format:
 ## Utils
 All utils functions is located in the *aoc.rs*
 
+## Benchmark
+Run benchmark by `cargo bench`. Benchmark report is located in `target/criterion`
+
 ## Template for day
-Put days in *days* folder. Use this template:
+Put days in *./days/* folder. Use this template:
 
 ```rust
     use crate::days::aoc::Solution;
