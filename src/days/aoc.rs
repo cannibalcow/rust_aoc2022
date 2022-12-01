@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{BufRead, BufReader},
+    io::{BufRead, BufReader, Read},
     time::{Duration, Instant},
 };
 extern crate colored;
@@ -47,8 +47,8 @@ pub trait Solution {
         self.solve_part1().pretty_print();
 
         pretty_print_day(self.get_day(), 2);
-        self.solve_example1().pretty_print();
-        self.solve_part1().pretty_print();
+        self.solve_example2().pretty_print();
+        self.solve_part2().pretty_print();
     }
 
     fn timer_start(&self) -> Instant {
@@ -130,8 +130,15 @@ pub fn read_file_i32(path: &str) -> Vec<i32> {
     return result;
 }
 
+pub fn read_file_str(path: &str) -> String {
+    let mut file = open_file(path);
+    let mut buf = String::new();
+    file.read_to_string(&mut buf).expect("Could not read file");
+    return buf;
+}
+
 #[allow(dead_code)]
-pub fn read_file_str(path: &str) -> Vec<String> {
+pub fn read_file_str_vec(path: &str) -> Vec<String> {
     let file = open_file(path);
 
     let bf = BufReader::new(file);
