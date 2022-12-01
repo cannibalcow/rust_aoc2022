@@ -13,22 +13,22 @@ impl Day2 {
 impl Solution for Day2 {
     fn solve_example1(&self) -> Answer {
         let instant = self.timer_start();
-        return Answer::new("answer example1", instant.elapsed());
+        return Answer::new("123456", instant.elapsed());
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
-        return Answer::new("answer part1", instant.elapsed());
+        return Answer::new("123456", instant.elapsed());
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
-        return Answer::new("answer example2", instant.elapsed());
+        return Answer::new("123456", instant.elapsed());
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
-        return Answer::new("answer part2", instant.elapsed());
+        return Answer::new("123456", instant.elapsed());
     }
 
     fn get_day(&self) -> i32 {

@@ -22,7 +22,7 @@ impl Answer {
 
     pub fn pretty_print(&self) {
         println!(
-            "{:>2} ({:<3?}) Answer: {:<15} {:<10}",
+            "{:>2} ({:>10?}) Answer: {:<10}{:>4}",
             emojis::get_by_shortcode("star").unwrap(),
             self.duration,
             format!("{}", self.answer).green(),
