@@ -28,7 +28,7 @@ impl Score for HandResult {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Clone)]
 enum Hand {
     Rock,
     Paper,
@@ -47,6 +47,7 @@ impl Score for Hand {
 
 trait Beats {
     fn beats(&self) -> Self;
+    fn loses(&self) -> Self;
 }
 
 impl Beats for Hand {
@@ -55,6 +56,14 @@ impl Beats for Hand {
             Hand::Rock => Hand::Scissors,
             Hand::Paper => Hand::Rock,
             Hand::Scissors => Hand::Paper,
+        }
+    }
+
+    fn loses(&self) -> Self {
+        match *self {
+            Hand::Rock => Hand::Paper,
+            Hand::Paper => Hand::Scissors,
+            Hand::Scissors => Hand::Rock,
         }
     }
 }
@@ -93,6 +102,27 @@ impl Hand {
         let score = &result.score() + &player_hand.score();
         return (result, score);
     }
+
+    pub fn parse_round_part2(round: &str) -> (Hand, Hand) {
+        let mut split_hand = round.split_whitespace();
+        let left_hand = match split_hand.next() {
+            Some("A") => Hand::Rock,
+            Some("B") => Hand::Paper,
+            Some("C") => Hand::Scissors,
+            Some(&_) => panic!("Uknown hand type"),
+            None => panic!("Unparsable data :("),
+        };
+
+        let right_hand = match split_hand.next() {
+            Some("X") => left_hand.beats(),
+            Some("Y") => left_hand.clone(),
+            Some("Z") => left_hand.loses(),
+            Some(&_) => panic!("Uknown hand type"),
+            None => todo!(),
+        };
+
+        return (left_hand, right_hand);
+    }
 }
 
 impl Day2 {
@@ -105,6 +135,19 @@ impl Day2 {
             .lines()
             .map(|round| {
                 let hand = Hand::parse_round(round);
+                let result = Hand::play(&hand.1, &hand.0);
+                return result;
+            })
+            .map(|result| result.1)
+            .into_iter()
+            .sum();
+    }
+
+    pub fn solve2(data: &String) -> i32 {
+        return data
+            .lines()
+            .map(|round| {
+                let hand = Hand::parse_round_part2(round);
                 let result = Hand::play(&hand.1, &hand.0);
                 return result;
             })
@@ -131,12 +174,16 @@ impl Solution for Day2 {
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
-        return Answer::new("123456", instant.elapsed());
+        let data = read_file_str(&get_path(Files::Example1, self.get_day()));
+        let solution = Day2::solve2(&data);
+        return Answer::new(&solution.to_string(), instant.elapsed());
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
-        return Answer::new("123456", instant.elapsed());
+        let data = read_file_str(&get_path(Files::Part1, self.get_day()));
+        let solution = Day2::solve2(&data);
+        return Answer::new(&solution.to_string(), instant.elapsed());
     }
 
     fn get_day(&self) -> i32 {

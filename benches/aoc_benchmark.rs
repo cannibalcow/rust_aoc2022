@@ -22,5 +22,18 @@ fn day_2_part_1(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, day_1_part_1, day_1_part_2, day_2_part_1);
+fn day_2_part_2(c: &mut Criterion) {
+    let day2 = Day2::new();
+    c.bench_function("Day 2 Part 2", |b| {
+        b.iter(|| day2.solve_part2());
+    });
+}
+
+criterion_group!(
+    benches,
+    day_1_part_1,
+    day_1_part_2,
+    day_2_part_1,
+    day_2_part_2
+);
 criterion_main!(benches);
