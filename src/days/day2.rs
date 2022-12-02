@@ -49,6 +49,16 @@ trait Beats {
     fn beats(&self) -> Self;
 }
 
+impl Beats for Hand {
+    fn beats(&self) -> Self {
+        match *self {
+            Hand::Rock => Hand::Scissors,
+            Hand::Paper => Hand::Rock,
+            Hand::Scissors => Hand::Paper,
+        }
+    }
+}
+
 impl Hand {
     pub fn parse_round(round: &str) -> (Hand, Hand) {
         let mut split_hand = round.split_whitespace();
@@ -79,28 +89,9 @@ impl Hand {
             _ if elf_beats == player_hand => HandResult::Lose,
             _ => HandResult::Draw,
         };
-        /*
-        println!(
-            "Score: {:?}: {:?} {:?}: {:?} = {:?}",
-            &result,
-            &result.score(),
-            &player_hand,
-            &player_hand.score(),
-            &result.score() + &player_hand.score()
-        );
-        */
+
         let score = &result.score() + &player_hand.score();
         return (result, score);
-    }
-}
-
-impl Beats for Hand {
-    fn beats(&self) -> Self {
-        match *self {
-            Hand::Rock => Hand::Scissors,
-            Hand::Paper => Hand::Rock,
-            Hand::Scissors => Hand::Paper,
-        }
     }
 }
 
