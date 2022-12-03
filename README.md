@@ -7,6 +7,9 @@ Input files should be placed in root of the project with the format:
 - day_#_part1
 - day_#_part2
 
+
+[Alt result](./result.png)
+
 ## Utils
 All utils functions is located in the *aoc.rs*
 

@@ -15,6 +15,7 @@ impl Day3 {
     pub fn solve1(data: String) -> u16 {
         let sum = data
             .split("\n")
+            .filter(|&x| !x.is_empty())
             .into_iter()
             .map(|line| line.split_at(line.len() / 2))
             .map(|(left, right)| {
@@ -31,7 +32,7 @@ impl Day3 {
                         }
                     })
                     .next()
-                    .unwrap_or(0) // WHY  THE FUCK !!!
+                    .unwrap() // WHY  THE FUCK !!!
             })
             .sum::<u16>();
 
@@ -52,7 +53,6 @@ impl Day3 {
                     })
                     .unwrap()
             })
-            //.inspect(|f| println!("kuk: {:?}", &f))
             .map(|v| {
                 if v as u8 >= b'a' {
                     let prio = ((v as u16 - b'a' as u16) + 1) as u16;
