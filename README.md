@@ -1,14 +1,17 @@
 # Advent of code 2022 in Rust
 
+## Result
+
+![result](result.png)
+
+## Input files
+
 Input files should be placed in root of the project with the format: 
 
 - day_#_example1
 - day_#_example2
 - day_#_part1
 - day_#_part2
-
-
-[Alt result](./result.png)
 
 ## Utils
 All utils functions is located in the *aoc.rs*
