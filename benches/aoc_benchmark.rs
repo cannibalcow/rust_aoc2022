@@ -1,5 +1,5 @@
 use criterion::{criterion_group, criterion_main, Criterion};
-use rust_aoc2022::days::{Day1, Day2, Day3, Day4, Day5, Solution};
+use rust_aoc2022::days::{Day1, Day2, Day3, Day4, Day5, Day6, Solution};
 
 fn day_1_part_1(c: &mut Criterion) {
     let day1 = Day1::new();
@@ -71,6 +71,20 @@ fn day_5_part_2(c: &mut Criterion) {
     });
 }
 
+fn day_6_part_1(c: &mut Criterion) {
+    let day6 = Day6::new();
+    c.bench_function("Day 6 Part 1", |b| {
+        b.iter(|| day6.solve_part1());
+    });
+}
+
+fn day_6_part_2(c: &mut Criterion) {
+    let day6 = Day6::new();
+    c.bench_function("Day 6 Part 2", |b| {
+        b.iter(|| day6.solve_part2());
+    });
+}
+
 criterion_group!(
     benches,
     day_1_part_1,
@@ -82,6 +96,8 @@ criterion_group!(
     day_4_part_1,
     day_4_part_2,
     day_5_part_1,
-    day_5_part_2
+    day_5_part_2,
+    day_6_part_1,
+    day_6_part_2,
 );
 criterion_main!(benches);
