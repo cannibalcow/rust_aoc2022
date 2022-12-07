@@ -5,6 +5,7 @@ pub mod day3;
 pub mod day4;
 pub mod day5;
 pub mod day6;
+pub mod day7;
 
 pub use self::aoc::Files;
 pub use self::aoc::Solution;
@@ -14,3 +15,4 @@ pub use self::day3::Day3;
 pub use self::day4::Day4;
 pub use self::day5::Day5;
 pub use self::day6::Day6;
+pub use self::day7::Day7;
