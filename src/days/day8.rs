@@ -25,11 +25,22 @@ struct TreeVisible {
     visible_down: bool,
     visible_left: bool,
     visible_right: bool,
+    scenic_score_up: i32,
+    scenic_score_down: i32,
+    scenic_score_left: i32,
+    scenic_score_right: i32,
 }
 
 impl TreeVisible {
     pub fn is_visible(&self) -> bool {
         self.visible_up || self.visible_down || self.visible_left || self.visible_right
+    }
+
+    pub fn scenic_score(&self) -> i32 {
+        self.scenic_score_up
+            * self.scenic_score_down
+            * self.scenic_score_left
+            * self.scenic_score_right
     }
 }
 
@@ -52,11 +63,21 @@ impl Forrest {
         let tree_val = self
             .get_tree_value(pos.0, pos.1)
             .expect("tree should be here");
+
+        let visible_up = self.is_visible(Direction::UP, (pos.0, pos.1 - 1), -1, &tree_val, 0);
+        let visible_down = self.is_visible(Direction::DOWN, (pos.0, pos.1 + 1), -1, &tree_val, 0);
+        let visible_left = self.is_visible(Direction::LEFT, (pos.0 - 1, pos.1), -1, &tree_val, 0);
+        let visible_right = self.is_visible(Direction::RIGHT, (pos.0 + 1, pos.1), -1, &tree_val, 0);
+
         return TreeVisible {
-            visible_up: self.is_visible(Direction::UP, (pos.0, pos.1 - 1), -1, &tree_val, 0),
-            visible_down: self.is_visible(Direction::DOWN, (pos.0, pos.1 + 1), -1, &tree_val, 0),
-            visible_left: self.is_visible(Direction::LEFT, (pos.0 - 1, pos.1), -1, &tree_val, 0),
-            visible_right: self.is_visible(Direction::RIGHT, (pos.0 + 1, pos.1), -1, &tree_val, 0),
+            visible_up: visible_up.0,
+            visible_down: visible_down.0,
+            visible_left: visible_left.0,
+            visible_right: visible_right.0,
+            scenic_score_up: visible_up.1,
+            scenic_score_down: visible_down.1,
+            scenic_score_left: visible_left.1,
+            scenic_score_right: visible_right.1,
         };
     }
 
@@ -67,9 +88,9 @@ impl Forrest {
         max_val: i32,
         tree_value: &i32,
         it: i32,
-    ) -> bool {
+    ) -> (bool, i32) {
         if max_val >= *tree_value {
-            return false;
+            return (false, it);
         }
 
         let current_tree_val = self.get_tree_value(next_pos.0, next_pos.1);
@@ -83,7 +104,7 @@ impl Forrest {
                     &tree_value,
                     it + 1,
                 ),
-                None => true,
+                None => (true, it),
             },
             Direction::DOWN => match current_tree_val {
                 Some(next_val) => self.is_visible(
@@ -93,7 +114,7 @@ impl Forrest {
                     tree_value,
                     it + 1,
                 ),
-                None => true,
+                None => (true, it),
             },
             Direction::LEFT => match current_tree_val {
                 Some(next_val) => self.is_visible(
@@ -103,7 +124,7 @@ impl Forrest {
                     tree_value,
                     it + 1,
                 ),
-                None => true,
+                None => (true, it),
             },
             Direction::RIGHT => match current_tree_val {
                 Some(next_val) => self.is_visible(
@@ -113,7 +134,7 @@ impl Forrest {
                     tree_value,
                     it + 1,
                 ),
-                None => true,
+                None => (true, it),
             },
         }
     }
@@ -149,7 +170,27 @@ impl Day8 {
     }
 
     fn solve2(data: String) -> String {
-        "2".to_string()
+        let res = Vec::from_iter(data.split("\n").map(String::from));
+        let mut forrest = Forrest::new();
+
+        for (y, line) in res.iter().enumerate() {
+            for (x, v) in line
+                .chars()
+                .map(|x| x.to_string().parse::<i32>().unwrap())
+                .enumerate()
+            {
+                forrest.add_trees(x as i32, y as i32, v);
+            }
+        }
+
+        return forrest
+            .trees
+            .iter()
+            .map(|f| forrest.is_tree_visible((f.0 .0, f.0 .1)))
+            .map(|f| f.scenic_score())
+            .max()
+            .expect("OOh noes")
+            .to_string();
     }
 }
 
@@ -173,8 +214,7 @@ impl Solution for Day8 {
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
-        //       let solution = Day8::solve2(data);
-        let solution = "1";
+        let solution = Day8::solve2(data);
 
         return Answer::new(&solution.to_string(), instant.elapsed());
     }
@@ -182,8 +222,7 @@ impl Solution for Day8 {
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
-        //      let solution = Day8::solve2(data);
-        let solution = "1";
+        let solution = Day8::solve2(data);
 
         return Answer::new(&solution.to_string(), instant.elapsed());
     }
