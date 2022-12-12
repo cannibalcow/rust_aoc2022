@@ -2,7 +2,7 @@ use std::time::Instant;
 
 use days::{
     aoc::{christmas_print, pretty_print_banner, pretty_print_linebreak},
-    Day1, Day10, Day11, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9, Solution,
+    Day1, Day10, Day11, Day12, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9, Solution,
 };
 
 mod days;
@@ -20,6 +20,7 @@ fn main() {
         Box::new(Day9::new()),
         Box::new(Day10::new()),
         Box::new(Day11::new()),
+        Box::new(Day12::new()),
     ];
 
     pretty_print_linebreak();
