@@ -1,10 +1,14 @@
-use std::{fmt::Display, str::FromStr};
+use std::{
+    collections::{HashMap, HashSet},
+    fmt::Display,
+    str::FromStr,
+};
 
 use crate::days::aoc::{read_file_str, Solution};
 
 use super::aoc::{get_path, Answer, Files};
 
-#[derive(Eq, PartialEq, Clone, Copy, Debug)]
+#[derive(Eq, PartialEq, Clone, Copy, Debug, Hash)]
 struct Pos {
     x: usize,
     y: usize,
@@ -57,25 +61,23 @@ struct HeightMap {
     start: Pos,
     end: Pos,
     steps: i32,
-    rows: usize,
-    cols: usize,
-    data: Vec<Vec<char>>,
+    data: HashMap<Pos, char>,
     visited: Vec<Pos>,
-    path: Vec<Pos>,
+    path: HashSet<Pos>,
     current: Pos,
+    prev: Pos,
 }
 
 impl HeightMap {
     fn get_pos_value(&self, pos: &Pos) -> Option<i32> {
-        if pos.x > self.cols || pos.y > self.rows {
-            return None;
-        }
-
         if pos.eq(&self.start) || pos.eq(&self.end) {
             return None;
         }
 
-        return Some(self.data[pos.y as usize][pos.x as usize] as i32);
+        return match self.data.get(pos) {
+            Some(chr) => Some(*chr as i32),
+            None => None,
+        };
     }
 
     fn get_available_paths(&self) -> Vec<(Pos, i32)> {
@@ -86,14 +88,23 @@ impl HeightMap {
             self.current.next_pos(Direction::RIGHT),
         ];
 
+        let current_value: i32 = if self.current.eq(&self.start) {
+            96i32 // mAGixcs
+        } else {
+            self.get_pos_value(&self.current).unwrap()
+        };
+
+        println!("Current value: {}", &current_value);
+
         let result: Vec<(Pos, i32)> = all_directions
             .iter()
-            .filter(|pos| pos.is_some())
+            .filter(|pos| pos.is_some()) // Filtrera alla positions som är möjliga
             .map(|pos| pos.unwrap())
             .map(|pos| pos.clone())
-            .filter(|pos| !self.visited.contains(pos))
-            .filter(|pos| self.get_pos_value(pos).is_some())
+            .filter(|pos| !self.visited.contains(pos)) // Filtera bort de som är besökta
+            .filter(|pos| self.get_pos_value(pos).is_some()) //
             .map(|pos| (pos, self.get_pos_value(&pos).unwrap()))
+            .filter(|(_, value)| value == &(current_value + 1))
             .collect();
 
         return result;
@@ -104,24 +115,39 @@ impl HeightMap {
         while self.current != self.end {
             // Get neighbours distances.
             let mut availagle_paths = self.get_available_paths();
-            //            let mut alternative_paths: Pos = vec![];
 
-            availagle_paths.sort_by_key(|f| f.1);
+            println!("{:?}", &availagle_paths);
 
+            if availagle_paths.is_empty() {
+                self.current = self.prev.clone();
+                continue;
+            }
+
+            // get Next pos
             let (next_pos, _): &(Pos, i32) = availagle_paths.iter().nth(0).unwrap();
+            println!("next pos: {}", &next_pos);
 
-            self.path.push(next_pos.clone());
-            // Pick neightbour greater  than or equal and not visited
+            // add to path
+            self.path.insert(next_pos.clone());
+            println!("{:?}", &self.path);
+            // Increment steps... not needed
+            self.steps += 1;
 
-            // No pics avalible. Go back
+            // add to visited
+            self.visited.push(self.current.clone());
 
-            self.visited.push(next_pos.clone());
-            // Move to pos
+            // set prev
+            self.prev = self.current;
+
+            // move current
             self.current = next_pos.clone();
 
-            // Update path
-            println!("{}", &self.current);
-            //            println!("{:?}", &self.path);
+            println!(
+                "[{}] Current: {}: {}",
+                &self.steps,
+                &self.current,
+                &self.data.get(&self.current).unwrap()
+            );
         }
     }
 }
@@ -132,54 +158,34 @@ impl FromStr for HeightMap {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut start: Pos = Pos::new(0, 0);
         let mut end: Pos = Pos::new(0, 0);
-        let data: Vec<Vec<char>> = s
-            .lines()
+        let mut data = HashMap::new();
+
+        s.lines()
             .into_iter()
             .map(|line| line.trim())
             .enumerate()
-            .map(|(row, line)| {
-                let mut v: Vec<char> = Vec::new();
+            .for_each(|(row, line)| {
                 for (col, value) in line.chars().enumerate() {
+                    let pos = Pos::new(col, row);
+                    data.insert(pos, value);
                     match value {
                         'S' => start = Pos::new(col, row),
                         'E' => end = Pos::new(col, row),
                         _ => (),
                     }
-                    v.push(value);
                 }
-                return v;
-            })
-            .collect();
-
-        let rows = data.len().to_owned();
-        let cols = data[0].len().to_owned();
+            });
 
         return Ok(HeightMap {
             start,
             end,
             steps: 0,
-            rows,
-            cols,
             data,
             visited: vec![],
-            path: vec![],
+            path: HashSet::new(),
             current: start.clone(),
+            prev: start.clone(),
         });
-    }
-}
-
-#[allow(unused)]
-impl Display for HeightMap {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "Start: {}, End: {}, Steps: {}\n",
-            self.start, self.end, self.steps
-        );
-        for row in &self.data {
-            write!(f, "{}\n", String::from_iter(row));
-        }
-        return Ok(());
     }
 }
 
@@ -191,12 +197,11 @@ impl Day12 {
 
     fn solve1(data: String) -> String {
         let mut hm = HeightMap::from_str(&data).unwrap();
-        println!("{}", &hm);
 
-        println!("{:?}", &hm.get_available_paths());
+        println!("Start: {}, End: {}", &hm.start, &hm.end);
         hm.find();
 
-        let solution = 1;
+        let solution = hm.steps;
         return solution.to_string();
     }
 
