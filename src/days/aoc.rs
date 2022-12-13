@@ -1,6 +1,7 @@
 use std::{
     fs::File,
-    io::{BufRead, BufReader, Read},
+    io::{self, BufRead, BufReader, Read},
+    thread,
     time::{Duration, Instant},
 };
 extern crate colored;
@@ -140,4 +141,16 @@ pub fn read_file_str_vec(path: &str) -> Vec<String> {
     bf.lines()
         .map(|l| l.expect("Could not parse line"))
         .collect()
+}
+
+pub fn step() -> String {
+    let mut buffer = String::new();
+    let stdin = io::stdin(); // We get `Stdin` here.
+    stdin.read_line(&mut buffer);
+    buffer
+}
+
+pub fn slow_down(millis: u64) {
+    let duration = Duration::from_millis(millis);
+    thread::sleep(duration);
 }
