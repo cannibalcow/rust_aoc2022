@@ -112,7 +112,7 @@ impl Day7 {
 
         let solution: usize = sizes.iter().filter(|x| **x < SMALL_FILE_LIMIT).sum();
 
-        return solution.to_string();
+        solution.to_string()
     }
 
     pub fn solve2(data: String) -> String {
@@ -125,7 +125,12 @@ impl Day7 {
 
         let solution: usize = *sizes.iter().filter(|x| **x > needed).min().unwrap();
 
-        return solution.to_string();
+        solution.to_string()
+    }
+}
+impl Default for Day7 {
+    fn default() -> Self {
+        Self ::new()
     }
 }
 
@@ -134,31 +139,31 @@ impl Solution for Day7 {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day7::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day7::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day7::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day7::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 7;
+        7
     }
 }

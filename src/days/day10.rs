@@ -21,11 +21,11 @@ impl FromStr for Instruction {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.contains(" ") {
-            let parts = s.split_once(" ").unwrap();
-            return Ok(Instruction::addx(parts.1.parse::<i32>().unwrap()));
+        if s.contains(' ') {
+            let parts = s.split_once(' ').unwrap();
+            Ok(Instruction::addx(parts.1.parse::<i32>().unwrap()))
         } else {
-            return Ok(Instruction::noop());
+            Ok(Instruction::noop())
         }
     }
 }
@@ -56,7 +56,7 @@ impl Iterator for InstructionIterator {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.cycle < self.instruction.instruction_type as i32 {
-            self.cycle = self.cycle + 1;
+            self.cycle += 1;
             return Some(self.cycle);
         }
         None
@@ -75,11 +75,11 @@ impl IntoIterator for Instruction {
     }
 }
 
-struct CPU {
+struct Cpu {
     x: i32,
 }
 
-impl CPU {
+impl Cpu {
     fn new() -> Self {
         Self { x: 1 }
     }
@@ -104,17 +104,17 @@ impl CPU {
                 }
             }
 
-            self.x = self.x + value;
+            self.x += value;
         }
-        return cycle_vals;
+        cycle_vals
     }
 }
 
-struct CRT {
+struct Crt {
     screen: Vec<Vec<String>>,
 }
 
-impl CRT {
+impl Crt {
     fn new() -> Self {
         let black_square = emojis::get_by_shortcode("christmas_tree").unwrap();
         Self {
@@ -128,19 +128,19 @@ impl CRT {
         let mut xs: HashMap<i32, i32> = HashMap::new();
 
         for instruction in program {
-            let value = instruction.arg.clone();
+            let value = instruction.arg;
             for _ in instruction {
                 cycle += 1;
                 xs.insert(cycle, x);
             }
-            x = x + value;
+            x += value;
         }
 
-        return xs;
+        xs
     }
 
     fn build_image(&mut self, program: Vec<Instruction>) {
-        let program_ouput = CRT::run_program(program);
+        let program_ouput = Crt::run_program(program);
         let santa = emojis::get_by_shortcode("santa").unwrap();
 
         for cycle in program_ouput {
@@ -157,7 +157,7 @@ impl CRT {
             for line in row {
                 print!("{}", &line);
             }
-            println!("");
+            println!();
         }
     }
 }
@@ -176,21 +176,27 @@ impl Day10 {
     }
 
     fn solve1(data: String) -> String {
-        let mut cpu = CPU::new();
+        let mut cpu = Cpu::new();
         let program = Day10::get_program(data);
 
         return cpu.run_part1(program).iter().sum::<i32>().to_string();
     }
 
     fn solve2(data: String) -> String {
-        let mut crt = CRT::new();
+        let mut crt = Crt::new();
 
         let program = Day10::get_program(data);
 
         crt.build_image(program);
         crt.render();
 
-        return String::from("");
+        String::from("")
+    }
+}
+
+impl Default for Day10 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -199,21 +205,21 @@ impl Solution for Day10 {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example2, self.get_day()));
         let solution = Day10::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day10::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example2, self.get_day()));
         let solution = Day10::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
@@ -221,10 +227,10 @@ impl Solution for Day10 {
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day10::solve2(data);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 10;
+        10
     }
 }

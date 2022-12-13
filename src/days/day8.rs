@@ -13,10 +13,10 @@ struct Forrest {
 
 #[derive(Debug)]
 enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
+    Up,
+    Down,
+    Left,
+    Right,
 }
 
 #[derive(Debug)]
@@ -56,7 +56,7 @@ impl Forrest {
     }
 
     pub fn get_tree_value(&self, x: i32, y: i32) -> Option<&i32> {
-        return self.trees.get(&(x, y));
+        self.trees.get(&(x, y))
     }
 
     pub fn is_tree_visible(&self, pos: (i32, i32)) -> TreeVisible {
@@ -64,12 +64,12 @@ impl Forrest {
             .get_tree_value(pos.0, pos.1)
             .expect("tree should be here");
 
-        let visible_up = self.is_visible(Direction::UP, (pos.0, pos.1 - 1), -1, &tree_val, 0);
-        let visible_down = self.is_visible(Direction::DOWN, (pos.0, pos.1 + 1), -1, &tree_val, 0);
-        let visible_left = self.is_visible(Direction::LEFT, (pos.0 - 1, pos.1), -1, &tree_val, 0);
-        let visible_right = self.is_visible(Direction::RIGHT, (pos.0 + 1, pos.1), -1, &tree_val, 0);
+        let visible_up = self.is_visible(Direction::Up, (pos.0, pos.1 - 1), -1, tree_val, 0);
+        let visible_down = self.is_visible(Direction::Down, (pos.0, pos.1 + 1), -1, tree_val, 0);
+        let visible_left = self.is_visible(Direction::Left, (pos.0 - 1, pos.1), -1, tree_val, 0);
+        let visible_right = self.is_visible(Direction::Right, (pos.0 + 1, pos.1), -1, tree_val, 0);
 
-        return TreeVisible {
+        TreeVisible {
             visible_up: visible_up.0,
             visible_down: visible_down.0,
             visible_left: visible_left.0,
@@ -78,7 +78,7 @@ impl Forrest {
             scenic_score_down: visible_down.1,
             scenic_score_left: visible_left.1,
             scenic_score_right: visible_right.1,
-        };
+        }
     }
 
     pub fn is_visible(
@@ -96,17 +96,17 @@ impl Forrest {
         let current_tree_val = self.get_tree_value(next_pos.0, next_pos.1);
 
         match direction {
-            Direction::UP => match current_tree_val {
+            Direction::Up => match current_tree_val {
                 Some(next_val) => self.is_visible(
                     direction,
                     (next_pos.0, next_pos.1 - 1),
                     next_val.to_owned(),
-                    &tree_value,
+                    tree_value,
                     it + 1,
                 ),
                 None => (true, it),
             },
-            Direction::DOWN => match current_tree_val {
+            Direction::Down => match current_tree_val {
                 Some(next_val) => self.is_visible(
                     direction,
                     (next_pos.0, next_pos.1 + 1),
@@ -116,7 +116,7 @@ impl Forrest {
                 ),
                 None => (true, it),
             },
-            Direction::LEFT => match current_tree_val {
+            Direction::Left => match current_tree_val {
                 Some(next_val) => self.is_visible(
                     direction,
                     (next_pos.0 - 1, next_pos.1),
@@ -126,7 +126,7 @@ impl Forrest {
                 ),
                 None => (true, it),
             },
-            Direction::RIGHT => match current_tree_val {
+            Direction::Right => match current_tree_val {
                 Some(next_val) => self.is_visible(
                     direction,
                     (next_pos.0 + 1, next_pos.1),
@@ -146,7 +146,7 @@ impl Day8 {
     }
 
     fn solve1(data: String) -> String {
-        let res = Vec::from_iter(data.split("\n").map(String::from));
+        let res = Vec::from_iter(data.split('\n').map(String::from));
 
         let mut forrest = Forrest::new();
 
@@ -170,7 +170,7 @@ impl Day8 {
     }
 
     fn solve2(data: String) -> String {
-        let res = Vec::from_iter(data.split("\n").map(String::from));
+        let res = Vec::from_iter(data.split('\n').map(String::from));
         let mut forrest = Forrest::new();
 
         for (y, line) in res.iter().enumerate() {
@@ -194,13 +194,19 @@ impl Day8 {
     }
 }
 
+impl Default for Day8 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Solution for Day8 {
     fn solve_example1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
 
         let solution = Day8::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
@@ -208,7 +214,7 @@ impl Solution for Day8 {
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day8::solve1(data);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
@@ -216,7 +222,7 @@ impl Solution for Day8 {
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day8::solve2(data);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
@@ -224,10 +230,10 @@ impl Solution for Day8 {
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day8::solve2(data);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 8;
+        8
     }
 }

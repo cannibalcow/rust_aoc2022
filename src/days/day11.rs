@@ -29,29 +29,27 @@ impl FromStr for Monkey {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let lines: Vec<&str> = s.split("\n").collect();
+        let lines: Vec<&str> = s.split('\n').collect();
         // Starting items
         let holding = lines
-            .iter()
-            .nth(1)
+            .get(1)
             .unwrap()
-            .split_once(":")
+            .split_once(':')
             .unwrap()
             .1
             .trim()
-            .replace(",", "")
+            .replace(',', "")
             .split_whitespace()
             .map(|s| s.parse::<u128>().unwrap())
             .collect::<VecDeque<u128>>();
 
         // operation
         let (operation_type_str, operation_value_str) = lines
-            .iter()
-            .nth(2)
+            .get(2)
             .unwrap()
             .strip_prefix("  Operation: new = old ")
             .unwrap()
-            .split_once(" ")
+            .split_once(' ')
             .unwrap();
 
         let operation_type: OperationType = match operation_type_str {
@@ -62,13 +60,12 @@ impl FromStr for Monkey {
 
         let operation_value = match operation_value_str {
             "old" => OperationValue::Old,
-            val => OperationValue::Value(u128::from_str_radix(val, 10).unwrap()),
+            val => OperationValue::Value(val.parse::<u128>().unwrap()),
         };
 
         // divisable
         let divisible_by = lines
-            .iter()
-            .nth(3)
+            .get(3)
             .unwrap()
             .strip_prefix("  Test: divisible by ")
             .unwrap()
@@ -77,8 +74,7 @@ impl FromStr for Monkey {
 
         // monky target true
         let divisible_true = lines
-            .iter()
-            .nth(4)
+            .get(4)
             .unwrap()
             .strip_prefix("    If true: throw to monkey ")
             .unwrap()
@@ -86,15 +82,14 @@ impl FromStr for Monkey {
             .unwrap();
 
         let divisible_false = lines
-            .iter()
-            .nth(5)
+            .get(5)
             .unwrap()
             .strip_prefix("    If false: throw to monkey ")
             .unwrap()
             .parse::<usize>()
             .unwrap();
 
-        return Ok(Monkey {
+        Ok(Monkey {
             holding,
             operation_type,
             operation_value,
@@ -102,7 +97,7 @@ impl FromStr for Monkey {
             divisible_true,
             divisible_false,
             inspects: 0,
-        });
+        })
     }
 }
 
@@ -115,14 +110,14 @@ fn monkies_from_str(s: &str) -> Vec<Monkey> {
 
 fn process_rounds(monkeys: &mut Vec<Monkey>, baseline: u128, skip_divide: bool) {
     for monkey_index in 0..monkeys.len() {
-        while monkeys[monkey_index].holding.len() > 0 {
+        while !monkeys[monkey_index].holding.is_empty() {
             let monkey = &mut monkeys[monkey_index];
             let item = monkey.holding.pop_front();
 
             if let Some(item) = item {
                 let operatation_value = match &monkey.operation_value {
-                    OperationValue::Old => item.clone(),
-                    OperationValue::Value(val) => val.clone(),
+                    OperationValue::Old => item,
+                    OperationValue::Value(val) => *val,
                 };
 
                 let new_value_after_inspection = match monkey.operation_type {
@@ -141,8 +136,6 @@ fn process_rounds(monkeys: &mut Vec<Monkey>, baseline: u128, skip_divide: bool) 
                 let monkey_throw_false = monkey.divisible_false;
 
                 monkey.inspects += 1;
-
-                drop(monkey);
 
                 match throw_target_test {
                     true => monkeys[monkey_throw_true]
@@ -182,7 +175,7 @@ impl Day11 {
 
         let solution: u128 = top_monkies[0] * top_monkies[1];
 
-        return solution.to_string();
+        solution.to_string()
     }
 
     fn solve2(data: String) -> String {
@@ -204,7 +197,12 @@ impl Day11 {
 
         let solution: u128 = top_monkies[0] * top_monkies[1];
 
-        return solution.to_string();
+        solution.to_string()
+    }
+}
+impl Default for Day11 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -213,21 +211,21 @@ impl Solution for Day11 {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day11::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day11::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day11::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
@@ -235,10 +233,10 @@ impl Solution for Day11 {
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day11::solve2(data);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 11;
+        11
     }
 }

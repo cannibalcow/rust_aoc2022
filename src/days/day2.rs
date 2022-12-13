@@ -87,7 +87,7 @@ impl Hand {
             None => todo!(),
         };
 
-        return (left_hand, right_hand);
+        (left_hand, right_hand)
     }
 
     pub fn play(player_hand: &Hand, elf_hand: &Hand) -> (HandResult, i32) {
@@ -99,8 +99,8 @@ impl Hand {
             _ => HandResult::Draw,
         };
 
-        let score = &result.score() + &player_hand.score();
-        return (result, score);
+        let score = result.score() + player_hand.score();
+        (result, score)
     }
 
     pub fn parse_round_part2(round: &str) -> (Hand, Hand) {
@@ -121,7 +121,7 @@ impl Hand {
             None => todo!(),
         };
 
-        return (left_hand, right_hand);
+        (left_hand, right_hand)
     }
 }
 
@@ -130,30 +130,32 @@ impl Day2 {
         Self {}
     }
 
-    pub fn solve1(data: &String) -> i32 {
-        return data
-            .lines()
+    pub fn solve1(data: &str) -> i32 {
+        data.lines()
             .map(|round| {
                 let hand = Hand::parse_round(round);
-                let result = Hand::play(&hand.1, &hand.0);
-                return result;
+                Hand::play(&hand.1, &hand.0)
             })
             .map(|result| result.1)
             .into_iter()
-            .sum();
+            .sum()
     }
 
-    pub fn solve2(data: &String) -> i32 {
-        return data
-            .lines()
+    pub fn solve2(data: &str) -> i32 {
+        data.lines()
             .map(|round| {
                 let hand = Hand::parse_round_part2(round);
-                let result = Hand::play(&hand.1, &hand.0);
-                return result;
+                Hand::play(&hand.1, &hand.0)
             })
             .map(|result| result.1)
             .into_iter()
-            .sum();
+            .sum()
+    }
+}
+
+impl Default for Day2 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -162,31 +164,31 @@ impl Solution for Day2 {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day2::solve1(&data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day2::solve1(&data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day2::solve2(&data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day2::solve2(&data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 2;
+        2
     }
 }

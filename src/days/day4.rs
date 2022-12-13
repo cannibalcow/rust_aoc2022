@@ -25,7 +25,7 @@ impl Assignment {
             static ref RE: Regex = Regex::new(r"([0-9]+)-([0-9]+),([0-9]+)-([0-9]+)").unwrap();
         }
 
-        return match RE.captures(&line.trim()) {
+        return match RE.captures(line.trim()) {
             Some(cap) => Assignment::new(
                 (
                     cap[1].parse::<i32>().unwrap(),
@@ -43,11 +43,11 @@ impl Assignment {
     pub fn fully_overlaps(&self) -> bool {
         let first_overlaps = self.first.0 <= self.second.0 && self.first.1 >= self.second.1;
         let second_overlaps = self.second.0 <= self.first.0 && self.second.1 >= self.first.1;
-        return first_overlaps || second_overlaps;
+        first_overlaps || second_overlaps
     }
 
     pub fn overlap_at_all(&self) -> bool {
-        return self.first.0 <= self.second.1 && self.second.0 <= self.first.1;
+        self.first.0 <= self.second.1 && self.second.0 <= self.first.1
     }
 }
 
@@ -59,7 +59,7 @@ impl Day4 {
     fn get_assignments(data: String) -> Vec<Assignment> {
         return data
             .lines()
-            .map(|line| Assignment::from(line))
+            .map(Assignment::from)
             .collect::<Vec<Assignment>>();
     }
 
@@ -78,36 +78,42 @@ impl Day4 {
     }
 }
 
+impl Default for Day4 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Solution for Day4 {
     fn solve_example1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
-        let solution = Day4::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        let solution = Day4::solve1(data).to_string();
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
-        let solution = Day4::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        let solution = Day4::solve1(data).to_string();
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
-        let solution = Day4::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        let solution = Day4::solve2(data).to_string();
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
-        let solution = Day4::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        let solution = Day4::solve2(data).to_string();
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 4;
+        4
     }
 }

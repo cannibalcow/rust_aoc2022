@@ -51,10 +51,10 @@ impl Iterator for Move {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.current < self.amount {
-            self.current = self.current + 1;
+            self.current += 1;
             return Some(self.direction);
         }
-        return None;
+        None
     }
 }
 
@@ -62,12 +62,12 @@ impl FromStr for Move {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let parts = s.split_once(" ").unwrap();
-        return Ok(Move {
+        let parts = s.split_once(' ').unwrap();
+        Ok(Move {
             direction: Direction::from_str(parts.0).unwrap(),
             amount: parts.1.parse::<i32>().unwrap(),
             current: 0,
-        });
+        })
     }
 }
 
@@ -130,7 +130,7 @@ impl Day9 {
         let mut visited = HashSet::new();
 
         for line in data.lines() {
-            let mv = Move::from_str(&line).unwrap();
+            let mv = Move::from_str(line).unwrap();
             match mv.direction {
                 Direction::Left => {
                     for _ in mv {
@@ -164,7 +164,7 @@ impl Day9 {
         }
 
         let solution = visited.len() as i32;
-        return solution.to_string();
+        solution.to_string()
     }
 
     fn solve2(data: String) -> String {
@@ -173,7 +173,7 @@ impl Day9 {
         let mut positions = HashSet::new();
 
         for line in data.lines() {
-            let mv = Move::from_str(&line).unwrap();
+            let mv = Move::from_str(line).unwrap();
             match mv.direction {
                 Direction::Left => {
                     for _ in mv {
@@ -218,7 +218,13 @@ impl Day9 {
             }
         }
 
-        return positions.len().to_string();
+        positions.len().to_string()
+    }
+}
+
+impl Default for Day9 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -228,14 +234,14 @@ impl Solution for Day9 {
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
 
         let solution = Day9::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day9::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
@@ -243,7 +249,7 @@ impl Solution for Day9 {
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day9::solve2(data);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
@@ -251,10 +257,10 @@ impl Solution for Day9 {
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day9::solve2(data);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 9;
+        9
     }
 }

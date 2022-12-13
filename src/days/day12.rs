@@ -20,24 +20,24 @@ impl Pos {
     }
 
     fn next_pos(&self, direction: Direction) -> Option<Pos> {
-        return match direction {
-            Direction::UP => Some(Pos::new(self.x, self.y + 1)),
-            Direction::DOWN => {
+        match direction {
+            Direction::Up => Some(Pos::new(self.x, self.y + 1)),
+            Direction::Down => {
                 if self.y == 0 {
-                    return None;
+                    None
                 } else {
-                    return Some(Pos::new(self.x, self.y - 1));
+                    Some(Pos::new(self.x, self.y - 1))
                 }
             }
-            Direction::LEFT => {
+            Direction::Left => {
                 if self.x == 0 {
-                    return None;
+                    None
                 } else {
-                    return Some(Pos::new(self.x - 1, self.y));
+                    Some(Pos::new(self.x - 1, self.y))
                 }
             }
-            Direction::RIGHT => Some(Pos::new(self.x + 1, self.y)),
-        };
+            Direction::Right => Some(Pos::new(self.x + 1, self.y)),
+        }
     }
 }
 
@@ -45,16 +45,16 @@ impl Pos {
 impl Display for Pos {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "({}, {})", self.x, self.y);
-        return Ok(());
+        Ok(())
     }
 }
 
 #[derive(Debug)]
 enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
+    Up,
+    Down,
+    Left,
+    Right,
 }
 
 struct HeightMap {
@@ -74,18 +74,15 @@ impl HeightMap {
             return None;
         }
 
-        return match self.data.get(pos) {
-            Some(chr) => Some(*chr as i32),
-            None => None,
-        };
+        self.data.get(pos).map(|chr| *chr as i32)
     }
 
     fn get_available_paths(&self) -> Vec<(Pos, i32)> {
         let all_directions = vec![
-            self.current.next_pos(Direction::UP),
-            self.current.next_pos(Direction::DOWN),
-            self.current.next_pos(Direction::LEFT),
-            self.current.next_pos(Direction::RIGHT),
+            self.current.next_pos(Direction::Up),
+            self.current.next_pos(Direction::Down),
+            self.current.next_pos(Direction::Left),
+            self.current.next_pos(Direction::Right),
         ];
 
         let current_value: i32 = if self.current.eq(&self.start) {
@@ -100,47 +97,46 @@ impl HeightMap {
             .iter()
             .filter(|pos| pos.is_some()) // Filtrera alla positions som är möjliga
             .map(|pos| pos.unwrap())
-            .map(|pos| pos.clone())
             .filter(|pos| !self.visited.contains(pos)) // Filtera bort de som är besökta
             .filter(|pos| self.get_pos_value(pos).is_some()) //
             .map(|pos| (pos, self.get_pos_value(&pos).unwrap()))
             .filter(|(_, value)| value == &(current_value + 1))
             .collect();
 
-        return result;
+        result
     }
 
     fn find(&mut self) {
         println!("Begin: {}", self.start);
         while self.current != self.end {
             // Get neighbours distances.
-            let mut availagle_paths = self.get_available_paths();
+            let availagle_paths = self.get_available_paths();
 
             println!("{:?}", &availagle_paths);
 
             if availagle_paths.is_empty() {
-                self.current = self.prev.clone();
+                self.current = self.prev;
                 continue;
             }
 
             // get Next pos
-            let (next_pos, _): &(Pos, i32) = availagle_paths.iter().nth(0).unwrap();
+            let (next_pos, _): &(Pos, i32) = availagle_paths.get(0).unwrap();
             println!("next pos: {}", &next_pos);
 
             // add to path
-            self.path.insert(next_pos.clone());
+            self.path.insert(*next_pos);
             println!("{:?}", &self.path);
             // Increment steps... not needed
             self.steps += 1;
 
             // add to visited
-            self.visited.push(self.current.clone());
+            self.visited.push(self.current);
 
             // set prev
             self.prev = self.current;
 
             // move current
-            self.current = next_pos.clone();
+            self.current = *next_pos;
 
             println!(
                 "[{}] Current: {}: {}",
@@ -176,20 +172,26 @@ impl FromStr for HeightMap {
                 }
             });
 
-        return Ok(HeightMap {
+        Ok(HeightMap {
             start,
             end,
             steps: 0,
             data,
             visited: vec![],
             path: HashSet::new(),
-            current: start.clone(),
-            prev: start.clone(),
-        });
+            current: start,
+            prev: start,
+        })
     }
 }
 
 pub struct Day12 {}
+
+impl Default for Day12 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
 impl Day12 {
     pub fn new() -> Self {
         Self {}
@@ -202,12 +204,12 @@ impl Day12 {
         hm.find();
 
         let solution = hm.steps;
-        return solution.to_string();
+        solution.to_string()
     }
 
     fn solve3(_data: String) -> String {
         let solution = 1;
-        return solution.to_string();
+        solution.to_string()
     }
 }
 
@@ -216,7 +218,7 @@ impl Solution for Day12 {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day12::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
@@ -224,26 +226,26 @@ impl Solution for Day12 {
         let _data = read_file_str(&get_path(Files::Part1, self.get_day()));
         //let solution = Day12::solve1(data);
         let solution = 1;
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let _data = read_file_str(&get_path(Files::Example1, self.get_day()));
         //let solution = Day12::solve2(data);
-        let solution = 1;
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        let solution = 1.to_string();
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
         let _data = read_file_str(&get_path(Files::Part1, self.get_day()));
         //        let solution = Day12::solve2(data);
-        let solution = 1;
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        let solution = 1.to_string();
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 12;
+        12
     }
 }

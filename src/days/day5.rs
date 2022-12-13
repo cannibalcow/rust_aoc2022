@@ -32,7 +32,7 @@ impl Day5 {
             solution.push_str(s);
         }
 
-        return solution;
+        solution
     }
 
     pub fn solve2(data: String) -> String {
@@ -51,7 +51,13 @@ impl Day5 {
             solution.push_str(s);
         }
 
-        return solution;
+        solution
+    }
+}
+
+impl Default for Day5 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -67,19 +73,19 @@ impl Stacks {
         let mut keys: Vec<usize> = Vec::new();
 
         for key in _keys {
-            keys.push(key.clone());
+            keys.push(*key);
         }
         keys.sort();
-        return keys;
+        keys
     }
 
     fn pretty_print(&self) {
         for key in self.get_sorted_keys() {
             print!("{key}: ");
             print!("{:?}", self.stacks.get(&key).unwrap());
-            println!("");
+            println!();
         }
-        println!("");
+        println!();
     }
 }
 
@@ -146,11 +152,11 @@ impl FromStr for Procedures {
                     .split_ascii_whitespace()
                     .filter_map(|token| token.parse().ok());
 
-                return Procedure {
+                Procedure {
                     moves: numbers.next().unwrap(),
                     from: numbers.next().unwrap(),
                     to: numbers.next().unwrap(),
-                };
+                }
             })
             .collect();
 
@@ -164,9 +170,9 @@ impl FromStr for Stacks {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let stacks_str = s.split("\n\n").into_iter().next();
 
-        let lines = stacks_str.unwrap().split("\n").collect::<Vec<_>>();
+        let lines = stacks_str.unwrap().split('\n').collect::<Vec<_>>();
 
-        let cols = &lines.last().unwrap().clone();
+        let cols = &lines.last().unwrap();
 
         let number_of_cols = cols
             .chars()
@@ -192,8 +198,8 @@ impl FromStr for Stacks {
             for idx in 0..number_of_cols {
                 stacks.entry(idx + 1).and_modify(|stack| {
                     let col_val = match idx {
-                        0 => line.chars().nth(1).unwrap().to_string().to_owned(),
-                        _ => line.chars().nth(pos).unwrap().to_string().to_owned(),
+                        0 => line.chars().nth(1).unwrap().to_string(),
+                        _ => line.chars().nth(pos).unwrap().to_string(),
                     };
                     if col_val != " " {
                         stack.push_front(col_val);
@@ -201,13 +207,13 @@ impl FromStr for Stacks {
                 });
 
                 if idx != 0 {
-                    pos = pos + 4;
+                    pos += 4;
                 }
             }
             pos = 5;
         }
 
-        return Ok(Stacks { stacks });
+        Ok(Stacks { stacks })
     }
 }
 
@@ -216,31 +222,31 @@ impl Solution for Day5 {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day5::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day5::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day5::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day5::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution, instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 5;
+        5
     }
 }

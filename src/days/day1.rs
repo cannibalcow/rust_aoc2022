@@ -9,7 +9,7 @@ impl Day1 {
         Self {}
     }
 
-    fn get_input_as_groups(data: &String) -> Vec<Vec<i32>> {
+    fn get_input_as_groups(data: &str) -> Vec<Vec<i32>> {
         let output: Vec<Vec<i32>> = data
             .split("\n\n")
             .map(|group| {
@@ -19,15 +19,19 @@ impl Day1 {
                     .collect()
             })
             .collect();
-        return output.to_owned();
+        output
     }
 
-    fn get_sum_of_top_three(values: &mut Vec<i32>) -> i32 {
+    fn get_sum_of_top_three(values: &mut [i32]) -> i32 {
         values.sort();
         values.reverse();
+        values[0..3].iter().sum()
+    }
+}
 
-        let solution: i32 = values[0..3].iter().sum();
-        return solution;
+impl Default for Day1 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -43,7 +47,7 @@ impl Solution for Day1 {
 
         assert_eq!(solution, &24000);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
@@ -55,7 +59,7 @@ impl Solution for Day1 {
 
         let solution = values.iter().max().expect("Failed to find max");
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
@@ -68,7 +72,7 @@ impl Solution for Day1 {
 
         assert_eq!(&solution, &45000);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
@@ -79,10 +83,10 @@ impl Solution for Day1 {
         let mut values: Vec<i32> = output.iter().map(|f| f.iter().sum()).collect();
         let solution = Day1::get_sum_of_top_three(&mut values);
 
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 1;
+        1
     }
 }

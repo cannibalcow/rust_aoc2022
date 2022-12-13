@@ -13,8 +13,7 @@ impl Day3 {
     }
 
     pub fn solve1(data: String) -> u16 {
-        let sum = data
-            .split("\n")
+        data.split('\n')
             .filter(|&x| !x.is_empty())
             .into_iter()
             .map(|line| line.split_at(line.len() / 2))
@@ -24,24 +23,19 @@ impl Day3 {
                     .filter(|chr| left.contains(&chr.to_string()))
                     .map(|v| {
                         if v as u8 >= b'a' {
-                            let prio = ((v as u16 - b'a' as u16) + 1) as u16;
-                            prio
+                            ((v as u16 - b'a' as u16) + 1) as u16
                         } else {
-                            let prio = ((v as u16 - b'A' as u16) + 27) as u16;
-                            prio
+                            ((v as u16 - b'A' as u16) + 27) as u16
                         }
                     })
                     .next()
                     .unwrap() // WHY  THE FUCK !!!
             })
-            .sum::<u16>();
-
-        return sum;
+            .sum::<u16>()
     }
 
     pub fn solve2(data: String) -> u16 {
-        let sum = data
-            .split("\n")
+        data.split('\n')
             .filter(|&x| !x.is_empty())
             .collect::<Vec<_>>()
             .chunks(3)
@@ -55,16 +49,18 @@ impl Day3 {
             })
             .map(|v| {
                 if v as u8 >= b'a' {
-                    let prio = ((v as u16 - b'a' as u16) + 1) as u16;
-                    prio
+                    ((v as u16 - b'a' as u16) + 1) as u16
                 } else {
-                    let prio = ((v as u16 - b'A' as u16) + 27) as u16;
-                    prio
+                    ((v as u16 - b'A' as u16) + 27) as u16
                 }
             })
-            .sum();
+            .sum()
+    }
+}
 
-        return sum;
+impl Default for Day3 {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -73,31 +69,31 @@ impl Solution for Day3 {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day3::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_part1(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day3::solve1(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_example2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Example1, self.get_day()));
         let solution = Day3::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn solve_part2(&self) -> Answer {
         let instant = self.timer_start();
         let data = read_file_str(&get_path(Files::Part1, self.get_day()));
         let solution = Day3::solve2(data);
-        return Answer::new(&solution.to_string(), instant.elapsed());
+        Answer::new(&solution.to_string(), instant.elapsed())
     }
 
     fn get_day(&self) -> i32 {
-        return 3;
+        3
     }
 }
